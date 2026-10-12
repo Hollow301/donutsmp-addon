@@ -34,14 +34,20 @@ java {
     }
 }
 
-fun toMinecraftCompat(version: String): String {
-    val match = Regex("""^(\d+)\.(\d+)(?:\.(\d+))?$""").matchEntire(version)
-        .matchEntire(version)
-        ?: error("Invalid Minecraft version format: $version. Expected YY.D or YY.D.H")
 
-    val (year, drop, _) = match.destructured
-    return "~$year.$drop"
+fun minecraftFormat(version: String): String {
+    val parts = version.split(".")
+    require(parts.size == 2 || parts.size == 3) {
+        "Invalid Minecraft version format: $version"
+    }
+
+    val year = parts[0].toInt()
+    val minor = parts[1].toInt()
+    val patch = if (parts.size == 3) parts[2].toInt() else 0
+
+    return "$year.$minor.$patch"
 }
+
 
 tasks {
     processResources {
